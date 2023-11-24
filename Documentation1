@@ -1,0 +1,288 @@
+Tamarie Carrillo Student ID:
+011420359
+I. Introduction
+The goal is to create a program that efficiently delivers 40 packages on time within Salt Lake City, while ensuring that the combined total distance traveled by two trucks is under 140 miles. Specific delivery locations and distances are provided in the "Salt Lake City Downtown Map" and "WGUPS Distance Table." The program should be designed for use in this specific location and adaptable for other cities where the university has a presence. Detailed comments in the code are required for clarity and justification of decisions. The supervisor should have visibility into each truck's progress and package details based on variables in the "WGUPS Package File," including delivery status and time.
+II. Algorithm Selection (Section A)
+•	A.1 Named self-adjusting algorithm selection (e.g., nearest neighbor algorithm, greedy algorithm).
+Variation of nearest neighbor algorithm.
+•	A.2 Rationale for choosing the algorithm.
+I choose the nearest neighbor algorithm for its simplicity and ability to modify the algorithm to the constraints given. 
+•	A.3 How the chosen algorithm helps in meeting the delivery requirements.
+Initialization:
+Trucks start at the hub location (0, 0).
+Delivery Loop:
+The program iterates through undelivered packages. For each truck, it finds the closest undelivered package to its current location using the distance matrix. The closest package is added to the truck's route, and the truck's location is updated to the delivery location of the package. The package status is updated to 'en route', and the delivery time is set. 
+Deadline Check:
+After delivering packages, the program checks if any packages have passed their deadline.
+Distance Check:
+The program checks if a truck's distance from the hub has exceeded the maximum allowed distance. If so, it resets the truck's location to the hub.
+Loop Continues:
+The delivery loop continues until all packages are delivered. The self-adjusting nature comes from the fact that the truck's location is dynamically updated based on the delivered packages. This approach aims to reduce the overall travel distance by making the delivery routes more efficient.
+III. Data Structure Selection (Section B)
+•	B.1 Selection of a self-adjusting data structure (e.g., hash table).
+Hash Table
+•	B.2 Explanation of how the chosen data structure accommodates the relationship between stored data components.
+Data Structure:
+The primary data structure used is a list (self.table), where each element of the list is a bucket.
+Each bucket is implemented as a list (bucket_list), and it stores key-value pairs.
+Handling Collisions:
+The chaining technique is employed to handle collisions. If two keys hash to the same index (bucket), their key-value pairs are stored in the same bucket as a list.
+In case of a collision, new key-value pairs are appended to the existing list in the corresponding bucket.
+Insertion:
+The insert method inserts a key-value pair into the hash table.
+It calculates the hash of the key to determine the bucket index and then appends the key-value pair to the bucket's list.
+If a key collision is detected (i.e., the key already exists in the bucket), it updates the corresponding value.
+Search: (Look Up)
+The search method looks for a key in the hash table.
+It calculates the hash of the key to find the corresponding bucket and then searches through the list in that bucket for the specified key.
+Removal:
+The remove method removes a key-value pair from the hash table.
+It calculates the hash of the key to locate the bucket and searches for the key in the bucket's list. If found, it removes the key-value pair from the list.
+Handling Load Factor:
+The load factor (ratio of the number of stored elements to the table size) is not explicitly managed in this implementation. Load factor management is crucial for efficiency, and it might be beneficial to resize the hash table when it becomes too full.
+In summary, the ChainingHashTable class uses a list of buckets, and each bucket is implemented as a list to handle collisions through chaining. This design effectively accommodates the relationship between stored data components by organizing them based on their hash values and handling collisions in a structured manner.
+•	B.3 Justification for the data structure choice.
+I choose the Chaining Hash Table data structure for its collision-handling capabilities, dynamic size adjustments, simplicity, flexibility, and effectiveness in supporting the search and retrieval operations required for managing and delivering packages in the given project context.
+IV. Program Overview (Section C)
+•	C.1 Algorithm's logic explained using pseudocode.
+Pseudo Code
+initialize empty routes for each truck
+initialize empty dictionary to track package assignments and statuses
+
+while there are undelivered packages:
+    for each truck:
+        if truck is not at capacity:
+            select the closest undelivered package to the current truck location
+            assign the package to the truck
+            update the truck's location to the delivery location
+            update package status to "en route"
+            update delivery time for the package
+        else:
+            continue to the next truck
+
+    update the status of packages with delivery deadlines if the current time exceeds the deadline
+    update the status of packages with special notes or constraints
+
+    for each truck:
+        if truck has reached its maximum distance limit:
+            return to the hub to minimize total distance traveled
+
+    repeat until all packages are delivered
+
+output delivery details, including package statuses, delivery times,
+
+•	C.2 Description of the programming environment (software and hardware).
+I developed the project in the following programming environment:
+Software:
+- IDE: IntelliJ 2023.2.1
+- Programming Language: Python 3.8
+- Version Control: GitLab
+- Operating System: Windows 10
+Hardware:
+- Computers: Surface Laptop Studio/ Inspiron 5490 AIO
+  - Processor: 11th Gen Intel(R) Core (TM) i5-11300H @ 3.10GHz   3.11 GHz/ Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz   2.30 GHz
+  - RAM: 16 GB for both 
+I used a GitLab repository to switch between my laptop and desktop depending on if  I was at home or work, and to keep track of all versions of my project.
+
+•	C.3 Evaluation of space-time complexity using big-O notation.
+The space-time complexity analysis of the provided program is as follows:
+1.	ChainingHashTable:
+•	insert: O(1) (constant time, assuming a good hash function)
+•	search: O(1) (constant time on average, considering a good hash function)
+•	remove: O(1) (constant time on average, considering a good hash function)
+•	values: O(N), where N is the total number of key-value pairs (you iterate through all values)
+2.	Package Class:
+•	__init__: O(1) (constant time)
+•	__str__: O(1) (constant time)
+•	update_status: O(1) (constant time)
+3.	Truck Class:
+•	__init__: O(1) (constant time)
+•	__str__: O(1) (constant time)
+•	calculate_travel_time: O(1) (constant time)
+4.	load_package_data:
+•	O(N), where N is the number of packages (you iterate through all packages)
+5.	distance_in_between:
+•	O(1) (constant time, assuming the lookup in the CSV_Distance is constant time)
+6.	extract_address:
+•	O(N), where N is the number of addresses (you iterate through all addresses)
+7.	delivering_packages:
+•	O(N^2), where N is the number of packages (nested loop where, in the worst case, you iterate through all packages for each package)
+8.	view_delivery_status:
+•	O(M * K), where M is the number of trucks and K is the average number of packages per truck (nested loop)
+9.	home_page:
+•	O(N^2), where N is the number of packages (dominated by the delivering_packages function)
+Overall Program Complexity:
+The most significant time complexity is associated with the delivering_packages function, which has a nested loop iterating through the packages. Other parts of the code generally have constant time complexities or linear complexities based on the number of packages, addresses, or trucks. In concise terms, the program's overall time complexity is dominated by the nested loop in the delivering_packages function, resulting in O(N^2), where N is the number of packages. The space complexity is generally linear, or constant based on the data structures and operations used.
+•	C.4 Discussion on scalability and adaptability to a growing number of packages.
+The solution exhibits a degree of scalability and adaptability to accommodate a growing number of packages. Several aspects contribute to this capability:
+1.	Modular Design:
+•	The codebase employs a modular design with distinct classes for Package, Truck, and the hash table (ChainingHashTable). This modular structure allows for easy expansion and modification of specific components without affecting the entire system.
+2.	Data Structures:
+•	The Chaining Hash Table (ChainingHashTable) used for package storage offers efficient insertion, search, and removal operations, with an average time complexity of O(1). This ensures that as the number of packages grows, the hash table remains a scalable and performant data structure for package management.
+3.	Dynamic Package Loading:
+•	The load_package_data function dynamically loads package information from a CSV file. As the number of packages increases, the solution can adapt without requiring code modifications. This dynamic loading mechanism allows the program to handle varying amounts of package data seamlessly.
+4.	Delivery Algorithm Efficiency:
+•	The delivery algorithm implemented in the delivering_packages function is designed to handle undelivered packages in a way that minimizes the distance traveled by trucks. While the algorithm's time complexity is O(N^2) in the worst case, its efficiency is influenced by factors such as the number of undelivered packages and their distribution, which can impact the overall scalability of the solution.
+5.	Hash Table Load Factor:
+•	The load factor of the hash table is a critical factor for its performance. If the number of packages grows significantly, the load factor can be monitored and, if necessary, the hash table capacity can be increased to maintain an optimal load factor. This adaptive resizing ensures efficient package retrieval.
+6.	Time Complexity Awareness:
+•	The solution's time complexity is a key consideration. While certain operations, like searching for the next package in the delivering_packages function, have a time complexity of O(N^2), the impact on scalability is contingent on the number of undelivered packages. As the number of packages grows, the algorithm's efficiency may be enhanced through further optimizations.
+In summary, the solution has the potential to scale and adapt to a growing number of packages, primarily due to its modular design, efficient data structures, dynamic loading mechanisms, and consideration for hash table load factors. While certain algorithmic complexities exist, ongoing optimizations can be explored to enhance scalability in handling larger datasets.
+
+•	C.5 Explanation of why the software design is efficient and easy to maintain.
+The software design exhibits characteristics that contribute to efficiency and ease of maintenance. Several key principles and practices contribute to these qualities:
+1.	Modularity:
+•	The code is structured with a modular design, featuring separate classes for Package, Truck, and ChainingHashTable. Each class encapsulates specific functionality, promoting code modularity. This makes it easier to understand, modify, and extend individual components without affecting the entire system.
+2.	Object-Oriented Programming (OOP):
+•	The use of object-oriented programming principles, such as encapsulation, inheritance, and abstraction, enhances the organization and readability of the code. Each class represents a real-world entity (e.g., Package, Truck), fostering a more intuitive and maintainable design.
+3.	Readability and Documentation:
+•	The code is well-documented with comments that explain the purpose, process, and flow of various functions and methods. This documentation enhances code readability, making it easier for developers to understand and maintain the software.
+4.	Separation of Concerns:
+•	The separation of concerns is evident in the distinct responsibilities assigned to each class. For example, the delivering_packages function is responsible for package delivery logistics, while the ChainingHashTable class handles hash table operations. This separation simplifies debugging, testing, and maintenance.
+5.	Dynamic Package Loading:
+•	The load_package_data function dynamically loads package information from a CSV file. This flexibility ensures that the software can adapt to changes in package data without requiring manual interventions. This dynamic loading mechanism simplifies maintenance when updating or modifying package information.
+6.	Consistent Coding Style:
+•	The code adheres to a consistent coding style, contributing to uniformity and readability. Consistency in style reduces cognitive load when navigating and maintaining the codebase, as developers can anticipate the structure and formatting.
+7.	Error Handling:
+•	The code includes error-handling mechanisms, such as try-except blocks, to capture and handle exceptions gracefully. Proper error handling contributes to the robustness of the software and facilitates easier troubleshooting and maintenance.
+8.	Abstraction and Encapsulation:
+•	Abstraction hides complex implementation details behind simplified interfaces. Encapsulation restricts direct access to internal details of a class. Both principles contribute to reducing dependencies and potential points of failure, making it easier to modify individual components without affecting others.
+9.	Testing Support:
+•	The modular design facilitates unit testing of individual components. Testing can be conducted independently for each class, ensuring that modifications or additions do not introduce unintended side effects. This supports the overall reliability and maintainability of the software.
+10.	Version Control and Collaboration:
+•	I used GitLab to keep track of my changes. The modular design allows for better collaboration among developers. Different team members can work on distinct components concurrently, minimizing conflicts and streamlining collaborative development.
+In summary, the software design's efficiency and ease of maintenance are rooted in modularity, OOP principles, readability, error handling, and a consistent coding style. These characteristics collectively contribute to a design that is adaptable, understandable, and straightforward to maintain over time.
+•	C.6 Discussion on strengths and weaknesses of the self-adjusting data structure.
+Strengths:
+1.	Adaptability to Load Factor:
+•	The chaining hash table can adapt to changes in the load factor (number of elements divided by the number of buckets) by adjusting the size of the underlying array. This adaptability helps maintain efficient performance, balancing the trade-off between space and time complexity.
+2.	Efficient Search Operation:
+•	The search operation in the hash table has an average time complexity of O(1) due to the use of chaining. This is especially beneficial when dealing with a large number of elements, as it allows for constant-time lookups on average.
+3.	Collision Handling:
+•	Chaining provides a mechanism for handling collisions by storing multiple key-value pairs in the same bucket. This approach ensures that even if two keys hash to the same index, they can coexist in the same location without causing conflicts.
+4.	Dynamic Resizing:
+•	The hash table supports dynamic resizing, allowing it to grow or shrink based on the number of elements. Dynamic resizing helps maintain a low load factor, preventing performance degradation due to collisions.
+Weaknesses:
+1.	Memory Overhead:
+•	Chaining introduces additional memory overhead because each bucket can potentially store multiple key-value pairs. This can lead to increased memory usage compared to other collision resolution methods, especially when dealing with a small number of elements.
+2.	Cache Inefficiency:
+•	The scattered storage of key-value pairs in different buckets can lead to cache inefficiency. Accessing elements that are not in the same bucket may result in cache misses, impacting overall performance.
+3.	Sensitivity to Hash Function Quality:
+•	The efficiency of the hash table is dependent on the quality of the hash function. A poor hash function that results in many collisions can degrade the performance of the table. It's crucial to use a well-designed hash function to achieve optimal results.
+4.	Limited Sorting:
+•	Unlike some other data structures, such as balanced trees, chaining hash tables do not naturally maintain a sorted order of elements. If sorting or ordered traversal is a common operation, a different data structure might be more suitable.
+5.	Difficulty in Load Factor Tuning:
+•	While the hash table dynamically resizes to manage the load factor, tuning the load factor to achieve optimal performance can be challenging. An inappropriate load factor might lead to either excessive resizing or increased collision rates.
+In summary, the chaining hash table provides efficient average-case performance for search operations and dynamic adaptability to changes in the number of elements. However, it comes with trade-offs such as increased memory usage and potential cache inefficiency. The choice of a hash table or another data structure should be made based on the specific requirements and characteristics of the application.
+
+•	C.7 Justification for the choice of a key for efficient delivery management.
+
+1.	Uniqueness:
+•	Package IDs are chosen as keys because they offer a high likelihood of uniqueness. Each package is assigned a unique identification number, ensuring that no two packages have the same ID. This uniqueness is crucial for accurately tracking and managing individual packages without confusion.
+2.	Fast Retrieval:
+•	Using Package IDs as keys allows for fast and constant-time retrieval of package information from the hash table. Since hash tables provide O(1) average time complexity for search operations, having a unique identifier as the key ensures quick access to package details.
+3.	Simplicity and Readability:
+•	Package IDs are typically simple alphanumeric identifiers, making them easy to read and manage. This simplicity contributes to the overall readability of the code and facilitates human understanding of the data structure.
+4.	Consistency with External Systems:
+•	Package IDs often align with external systems or databases, making integration with other parts of the delivery management system more seamless. When different components of the system use the same Package ID conventions, data synchronization becomes more straightforward.
+5.	Scalability:
+•	Package IDs are scalable, accommodating the potential growth in the number of packages. As new packages are added to the system, unique Package IDs can be easily generated without the need for complex adjustments to the key structure.
+6.	Ease of Input and User Interaction:
+•	Package IDs are user-friendly and can be easily input by users or operators. Whether manually entering data or interacting with the system, using Package IDs simplifies user input and reduces the likelihood of errors compared to more complex keys.
+7.	Compatibility with Sorting and Searching:
+•	Package IDs, being simple and often numeric or alphanumeric, are conducive to sorting operations. This can be beneficial for tasks such as generating delivery routes based on Package IDs or searching for specific packages efficiently.
+8.	Maintaining State and History:
+•	Package IDs, being unique and persistent, allow for the efficient maintenance of historical data and tracking changes in the package's status over time. This is crucial for auditing and understanding the chronological sequence of events in the delivery process.
+In conclusion, the choice of a Package ID as the key for efficient delivery management aligns with the need for uniqueness, simplicity, and ease of retrieval. It also facilitates integration with external systems and supports scalability for growing numbers of packages. Overall, Package IDs serve as effective and practical keys for managing package-related information in the delivery system.
+
+
+V. Source Acknowledgment (Section D)
+•	D.1 Proper acknowledgment of sources using in-text citations and references.
+C950 Supplemental Resources for Task Directions, Recorded Webinars, Example of Project Implementation Steps, Algorithm Overview Template, Study Guide,, ZYBooks
+VII. Conclusion
+•	Summarize key points from each section.
+II. Algorithm Selection (Section A)
+A.1 Named self-adjusting algorithm selection:
+•	Variation of nearest neighbor algorithm.
+A.2 Rationale for choosing the algorithm:
+•	Chose the nearest neighbor algorithm for its simplicity and adaptability to constraints.
+A.3 How the chosen algorithm helps in meeting the delivery requirements:
+•	Initialization of trucks at the hub.
+•	Delivery loop selects closest undelivered packages for each truck.
+•	Deadline and distance checks ensure route efficiency.
+•	Self-adjusting nature minimizes overall travel distance.
+III. Data Structure Selection (Section B)
+B.1 Selection of a self-adjusting data structure:
+•	Chaining Hash Table.
+B.2 Explanation of how the chosen data structure accommodates the relationship between stored data components:
+•	Utilizes a list of buckets with chaining for collision handling.
+•	Dynamic resizing allows the table to grow or shrink.
+B.3 Justification for the data structure choice:
+•	Chose Chaining Hash Table for collision handling, dynamic resizing, simplicity, and flexibility.
+IV. Program Overview (Section C)
+C.1 Algorithm's logic explained using pseudocode:
+•	Initialization of routes and package assignments.
+•	Loop for selecting closest packages, updating statuses, and managing truck routes.
+•	Output delivery details.
+C.2 Description of the programming environment:
+•	Developed in Python 3.8 using IntelliJ. Changed to PyCharm half way through.
+•	Version control with GitLab.
+•	Hardware: Surface Laptop Studio/Inspiron 5490 AIO.
+C.3 Evaluation of space-time complexity using big-O notation:
+•	Detailed analysis of time complexities for various functions.
+•	Overall program complexity is dominated by delivering_packages function (O(N^2)).
+C.4 Discussion on scalability and adaptability to a growing number of packages:
+•	Modularity, dynamic loading, and efficient data structures contribute to scalability.
+•	Considerations for load factor and hash table resizing support adaptability.
+C.5 Explanation of why the software design is efficient and easy to maintain:
+•	Modularity, OOP principles, readability, dynamic loading, error handling, and consistent coding style contribute to efficiency and ease of maintenance.
+C.6 Discussion on strengths and weaknesses of the self-adjusting data structure:
+•	Strengths include adaptability, efficient search, collision handling, and dynamic resizing.
+•	Weaknesses involve memory overhead, cache inefficiency, sensitivity to hash function quality, limited sorting, and difficulty in load factor tuning.
+C.7 Justification for the choice of a key for efficient delivery management:
+•	Chose Package IDs for uniqueness, fast retrieval, simplicity, readability, consistency, scalability, ease of input, compatibility with sorting, and maintaining state and history.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Extra Psuedocode
+function nearest_neighbor(truck, package_hash_table):
+    not_delivered = copy of truck.package_ids
+    truck.package_ids.clear()
+
+    while not_delivered is not empty:
+        next_address = positive infinity
+        next_package = None
+
+        for package_id in not_delivered:
+            package = package_hash_table.search(package_id)
+            distance = calculate_distance(truck.current_location, package.address)
+
+            if distance < next_address:
+                next_address = distance
+                next_package = package
+
+        truck.package_ids.append(next_package.ID)
+        not_delivered.remove(next_package)
+        update_truck_attributes(truck, next_package, next_address)
+
+function calculate_distance(location1, location2):
+    return distance between location1 and location2  
+
+function update_truck_attributes(truck, package, distance):
+    truck.mileage += distance
+    truck.current_location = package.address
+    travel_time = truck.calculate_travel_time(distance)
+    truck.departure_time += travel_time
+    package.delivery_time = truck.departure_time
+    package.departure_time = truck.departure_time
+
